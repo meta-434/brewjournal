@@ -2,34 +2,23 @@ var express = require("express");
 var router = express.Router();
 // const setupQuery = require("../queries/queries_setup");
 // const getAllRecipes = require("../queries/queries_recipes");
-const pool = require("../db");
+const knex = require("../knex/knex.js");
 
-// TODO: pg pool doesn't like reading queries from a file (see setupQuery.js or queries_recipes.js)
-// investigate alternatives to providing full sql queries in the router methods. because it's ugly.
-
-// GET fetch recipe by id
-// router.get('/?id=:id', async (req, res) => {
-//   console.log('fetching recipe by id: ', req.params.id);
-//   try {
-//     const data = await pool.query(`select * from recipes where id = $1;`, [req.params.id]);
-//     res.status(200).send(data.rows);
-//   } catch (err) {
-//     console.log(err);
-//     res.sendStatus(500);
-//   }
-// });
-
-// GET fetch all recipes
-router.get('/', async (req, res) => {
-  const { id } = req.query;
+// GET fetch all recipes, unless id provided, then fetch recipe by id
+router.get('/:id?', async (req, res) => {
+  const { id } = req.params;
   console.log('fetching all recipes');
     try {
-      if (req.query.id) {
-        const data = await pool.query(`select * from recipes where id = $1;`, [id]);
-        res.status(200).send(data.rows);
+      if (id) {
+        await knex.select('*').from('recipes').where('id', id).then((val) => {
+          if (val.length === 0) {
+            res.status(404).send({message: `Recipe with id ${id} not found!`});
+          } 
+          res.status(200).send(val);
+        });
       } else {
-        const data = await pool.query(`select * from recipes;`);
-        res.status(200).send(data.rows);
+        const data = await knex.select('*').from('recipes');
+        res.status(200).send(data);
       }
     }
     catch (err) {
@@ -38,51 +27,64 @@ router.get('/', async (req, res) => {
     }
 });
 
-
-
 // POST create new recipe, returns new recipe id
 router.post('/', async (req, res) => {
     const { version, isPublic, name, description, steps, owner_id} = req.body;
 
     try {
-        let dbres = await pool.query( 
-        `
-          insert into recipes (name, description, steps, owner_id) 
-          values ($1, $2, $3, $4)
-          returning id;
-        `, [name, description, steps, owner_id]);
-        res.status(200).send({message: "Recipe created!", data: dbres.rows});
+        let dbres = await knex('recipes')
+          .insert({name, version, is_public: isPublic, description, steps, owner_id})
+          .returning('id');
+
+        res.status(200).send({message: "Recipe created!", data: dbres});
     } catch (err) {
         console.log(err);
         res.sendStatus(500);
     };
 });
 
+// TODO: jump through hoops to handle a missing lookup like in the get by ID method
 // PUT update recipe by id
 router.put('/:id', async (req, res) => {
   const { id } = req.params;
   const { version, isPublic, name, description, steps} = req.body;
 
   try {
-    let dbres = await pool.query(
-      `
-        update recipes 
-        set version = $1, is_public = $2, name = $3, description = $4, steps = $5
-        where id = $6
-        returning id;
-      `, [version+=1, isPublic, name, description, steps, id]);
-    res.status(200).send({message: "Recipe updated!", data: dbres.rows});
-  } catch (err) {
-    console.log(err);
-    res.sendStatus(500);
-  };
+    await knex('recipes')
+      .where('id', '=', id)
+      .update({version, is_public: isPublic, name, description, steps}, ['id'])
+      .then((val) => {
+        if (val.length === 0) {
+          res.status(404).send({message: `Recipe with id ${id} not found!`})
+        } else {
+          res.status(200).send({message: "Recipe updated!", data: val});
+        }
+      });
+    } catch (err) {
+      const serErr = JSON.stringify(err, Object.getOwnPropertyNames(err));
+      console.log(serErr);
+      res.status(500).send(serErr);
+    }
 });
 
+// DELETE recipe by id
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+
+  let dbres = await knex('recipes')
+    .where('id', '=', id)
+    .del(['id'])
+    .catch((err) => {
+      console.log(err);
+      res.status(404).send({message: `Recipe with id ${id} not found!`})
+    })
+  res.status(200).send({message: "Recipe deleted!", data: dbres});
+});
 // =========================================
 // GET (create tables + seed DB)
 router.get("/setup", async (req, res) => {
   try {
-    await pool.query(
+    await knex.raw(
       `
         CREATE TABLE IF NOT EXISTS users (
           id SERIAL PRIMARY KEY,
