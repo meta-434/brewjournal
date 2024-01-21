@@ -1,10 +1,39 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
-import './index.css'
+import Recipes from '../src/components/Recipes.tsx';
+import ErrorPage from '../src/error-page.tsx';
+import {
+  createBrowserRouter,
+  RouterProvider
+} from "react-router-dom";
+import FrontPage from './components/FrontPage.tsx';
+import CreateRecipes from './components/CreateRecipes.tsx';
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <App />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: "/",
+        element: <FrontPage />,
+      },
+      {
+        path: "recipes/",
+        element: <Recipes />,
+      },
+      {
+        path: "create/",
+        element: <CreateRecipes />,
+      }
+    ]
+  },
+]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <App />
+    <RouterProvider router={router} />
   </React.StrictMode>,
 )

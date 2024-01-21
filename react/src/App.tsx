@@ -1,18 +1,22 @@
-import { useState } from 'react'
-import './App.css'
+import React from 'react';
 
-function App() {
-  const [count, setCount] = useState(0)
+import { Layout } from 'antd';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import { Outlet } from 'react-router-dom';
+
+
+
+
+const App: React.FC = () => {
 
   return (
-    <>
-      <h1>Hello World</h1>
-      <p>{count}</p>
-      <button onClick={() => setCount(count + 1)}>Click me</button>
+    <Layout>
+      <Header />
+      <Outlet />
+      <Footer />
+    </Layout>
+  );
+};
 
-      <p>This is a placeholder for BrewJournal's landing page while backend development is ongoing.</p>
-    </>
-  )
-}
-
-export default App
+export default App;
