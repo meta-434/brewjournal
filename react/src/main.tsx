@@ -10,6 +10,7 @@ import {
 import FrontPage from './components/FrontPage.tsx';
 import CreateRecipes from './components/CreateRecipes.tsx';
 
+// TODO: investigate restructuring of routes & Outputs for selective re-rendering
 const router = createBrowserRouter([
   {
     path: "/",
