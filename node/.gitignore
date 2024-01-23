@@ -30,3 +30,6 @@ yarn-error.log*
 .eslintrc.cjs
 .eslintrc.cjs
 .prettierrc
+
+/bin/
+/dist/
