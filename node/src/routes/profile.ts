@@ -1,3 +1,4 @@
+export {}; // needed for typescript to not complain about duplicate imports
 const express = require("express");
 const router = express.Router();
 

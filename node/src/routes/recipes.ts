@@ -1,7 +1,6 @@
-var express = require("express");
-var router = express.Router();
-// const setupQuery = require("../queries/queries_setup");
-// const getAllRecipes = require("../queries/queries_recipes");
+export {}; // needed for typescript to not complain about duplicate imports
+const express = require("express");
+const router = express.Router();
 const knex = require("../knex/knex.js");
 //==================================================
 // GET (create tables + seed DB)
