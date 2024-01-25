@@ -5,7 +5,7 @@ import path from "path";
 import cors from "cors";
 import indexRouter from "./routes/index";
 import profileRouter from "./Users/profile";
-import recipesRouter from "./Recipes/recipes";
+import recipesRouter from "./Recipes/Recipes";
 import loginRouter from "./Users/login";
 const port = 3000;
 

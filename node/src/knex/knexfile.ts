@@ -12,6 +12,12 @@ module.exports = {
     pool: {
       min: 2,
       max: 10
+    },
+    migrations: {
+      directory: './migrations',
+    },
+    seeds: {
+      directory: './seeds'
     }
   },
 
@@ -26,6 +32,6 @@ module.exports = {
       min: 2,
       max: 10
     }
-  }
+  },
 
 };
