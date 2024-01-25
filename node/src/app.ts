@@ -1,17 +1,19 @@
 require('dotenv').config();
-const createError = require("http-errors");
-const express = require("express");
-const path = require("path");
-const cors = require("cors");
-const cookieParser = require("cookie-parser");
-const logger = require("morgan");
-const indexRouter = require("./routes/index");
-const profileRouter = require("./routes/profile");
-const recipesRouter = require("./routes/recipes");
-const loginRouter = require("./routes/login");
+import createError from "http-errors";
+import express, {Request, Response, NextFunction} from "express";
+import path from "path";
+import cors from "cors";
+import indexRouter from "./routes/index";
+import profileRouter from "./Users/profile";
+import recipesRouter from "./Recipes/recipes";
+import loginRouter from "./Users/login";
 const port = 3000;
 
-const app = express();  
+interface HttpError extends Error {
+  status?: number;
+}
+
+const app = express();
 app.set('view engine', 'pug');
 
 // view engine setup
@@ -19,10 +21,8 @@ app.set("views", path.join(__dirname, "views"));
 app.use(cors({
   origin: '*' // Allowing front-end running port 5173
 }));
-app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.listen(port, () => {
@@ -35,12 +35,12 @@ app.use("/profile", profileRouter);
 app.use("/recipes", recipesRouter);
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.use(function (req: Request, res: Response, next: NextFunction) {
   next(createError(404));
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use((err: HttpError, req: Request, res: Response, next: NextFunction): void => {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
@@ -50,4 +50,4 @@ app.use(function (err, req, res, next) {
   res.render("error");
 });
 
-module.exports = app;
+export default app;

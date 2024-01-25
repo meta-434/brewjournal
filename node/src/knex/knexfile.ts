@@ -1,10 +1,6 @@
-// Update with your config settings.
+require ('ts-node/register');
 
-/**
- * @type { Object.<string, import("knex").Knex.Config> }
- */
 module.exports = {
-
   development: {
     client: 'pg',
     connection: {

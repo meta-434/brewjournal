@@ -1,10 +1,11 @@
 export {}; // needed for typescript to not complain about duplicate imports
-const express = require("express");
+import express, {Request, Response} from "express";
 const router = express.Router();
-const knex = require("../knex/knex.js");
+import knex from "../knex/knex";
+import type { Recipe } from "./RecipesTypes.d.ts";
 //==================================================
 // GET (create tables + seed DB)
-router.get("/setup", async (req, res) => {
+router.get("/setup", async (req: Request, res: Response) => {
   try {
     await knex.raw(
       `
@@ -45,19 +46,19 @@ router.get("/setup", async (req, res) => {
 
 
 // GET fetch all recipes, unless id provided, then fetch recipe by id
-router.get('/:id?', async (req, res) => {
+router.get('/:id?', async (req: Request, res: Response) => {
   const { id } = req.params;
   console.log('fetching all recipes');
     try {
       if (id) {
-        await knex.select('*').from('recipes').where('id', id).then((val) => {
+        await knex.select('*').from('recipes').where('id', id).then((val: Recipe[]) => {
           if (val.length === 0) {
             res.status(404).send({message: `Recipe with id ${id} not found!`});
           } 
           res.status(200).send(val);
         });
       } else {
-        const data = await knex.select('*').from('recipes');
+        const data: Recipe[] = await knex.select('*').from('recipes');
         res.status(200).send(data);
       }
     }
@@ -68,7 +69,7 @@ router.get('/:id?', async (req, res) => {
 });
 
 // POST create new recipe, returns new recipe id
-router.post('/', async (req, res) => {
+router.post('/', async (req: Request, res: Response) => {
     const { version, isPublic, name, description, steps, owner_id} = req.body;
 
     try {
@@ -85,7 +86,7 @@ router.post('/', async (req, res) => {
 
 // TODO: jump through hoops to handle a missing lookup like in the get by ID method
 // PUT update recipe by id
-router.put('/:id', async (req, res) => {
+router.put('/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
   const { version, isPublic, name, description, steps} = req.body;
 
@@ -93,7 +94,7 @@ router.put('/:id', async (req, res) => {
     await knex('recipes')
       .where('id', '=', id)
       .update({version, is_public: isPublic, name, description, steps}, ['id'])
-      .then((val) => {
+      .then((val: Recipe[]) => {
         if (val.length === 0) {
           res.status(404).send({message: `Recipe with id ${id} not found!`})
         } else {
@@ -108,7 +109,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE recipe by id
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
 
   let dbres = await knex('recipes')
@@ -121,4 +122,4 @@ router.delete('/:id', async (req, res) => {
   res.status(200).send({message: "Recipe deleted!", data: dbres});
 });
 
-module.exports = router;
+export default router;
