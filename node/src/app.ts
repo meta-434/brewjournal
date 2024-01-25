@@ -14,7 +14,6 @@ interface HttpError extends Error {
 }
 
 const app = express();
-app.set('view engine', 'pug');
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
