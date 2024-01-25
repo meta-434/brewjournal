@@ -46,11 +46,12 @@ import type { Recipe } from "./RecipesTypes";
 
 
 // GET fetch all recipes, unless id provided, then fetch recipe by id
-router.get('/:id?', async (req: Request, res: Response) => {
+router.get('/:id(\\d+)?', async ( req: Request, res: Response ) => {
   const { id } = req.params;
   console.log('fetching all recipes');
     try {
       if (id) {
+        // fetch recipe by id
         await knex.select('*').from('recipes').where('id', id).then((val: Recipe[]) => {
           if (val.length === 0) {
             res.status(404).send({message: `Recipe with id ${id} not found!`});
@@ -58,30 +59,31 @@ router.get('/:id?', async (req: Request, res: Response) => {
           res.status(200).send(val);
         });
       } else {
+        // fetch all recipes
         const data: Recipe[] = await knex.select('*').from('recipes');
         res.status(200).send(data);
       }
     }
-    catch (err) {
+    catch (err:any) {
         console.log(err);
-        res.sendStatus(500);
+        res.sendStatus(500).render(err.stack);
     }
 });
 
 // POST create new recipe, returns new recipe id
 router.post('/', async (req: Request, res: Response) => {
-    const { version, isPublic, name, description, steps, owner_id} = req.body;
+  const { version, isPublic, name, description, steps, owner_id} = req.body;
 
-    try {
-        let dbres = await knex('recipes')
-          .insert({name, version, is_public: isPublic, description, steps, owner_id})
-          .returning('id');
+  try {
+    let dbres = await knex('recipes')
+      .insert({name, version, is_public: isPublic, description, steps, owner_id})
+      .returning('id');
 
-        res.status(200).send({message: "Recipe created!", data: dbres});
-    } catch (err) {
-        console.log(err);
-        res.sendStatus(500);
-    };
+    res.status(200).send({message: "Recipe created!", data: dbres});
+  } catch (err: any) {
+    console.log('error:\n', err);
+    res.sendStatus(500).render(err.stack);
+  };
 });
 
 // TODO: jump through hoops to handle a missing lookup like in the get by ID method
