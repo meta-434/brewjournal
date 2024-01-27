@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./dist/app.js",
     "tsc": "tsc",
-    "postinstall": "npm run tsc",
+    "start:docker": "rm -rf ./dist && tsc && node ./dist/app.js",
     "dev": "node --require ts-node/register src/app.ts",
     "knex:migrate:latest": "npx knex --knexfile './src/knex/knexfile.ts' --knexpath './src/knex/knex.ts' migrate:latest",
     "knex:migrate:rollback": "npx knex --knexfile './src/knex/knexfile.ts' --knexpath './src/knex/knex.ts' migrate:rollback",
