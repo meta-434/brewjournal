@@ -5,7 +5,7 @@ const config = {
     client: 'pg',
     connection: {
       port: 5432,
-      host: 'host.docker.internal',
+      host: 'localhost',
       database: 'db123',
       user:     'user123',
       password: 'password123'

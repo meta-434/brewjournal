@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import ant_design from 'antd'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -7,5 +8,10 @@ export default defineConfig({
   server: {
     host: true,
     //port: 5173, When not running with docker compose, this is the port which will be used in docker
-  }
+  },
+  optimizeDeps: {
+    include: [
+      'antd',
+    ],
+  },
 })

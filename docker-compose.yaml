@@ -18,7 +18,7 @@ services:
     networks: 
       - node-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready"]
+      test: ["CMD-SHELL", "pg_isready -d db123 -U user123"]
 
   backend:
     restart: unless-stopped
