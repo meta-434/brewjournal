@@ -1,9 +1,10 @@
-require ('ts-node/register');
+import 'ts-node/register';
 
-module.exports = {
+const config = {
   development: {
     client: 'pg',
     connection: {
+      port: 5432,
       host: 'localhost',
       database: 'db123',
       user:     'user123',
@@ -14,10 +15,12 @@ module.exports = {
       max: 10
     },
     migrations: {
-      directory: './migrations',
+      extension: 'ts',
+      directory: 'src/knex/migrations',
     },
     seeds: {
-      directory: './seeds'
+      extension: 'ts',
+      directory: 'src/knex/seeds'
     }
   },
 
@@ -33,5 +36,6 @@ module.exports = {
       max: 10
     }
   },
-
 };
+
+export default config;

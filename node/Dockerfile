@@ -8,8 +8,9 @@ RUN npm i -g knex
 
 COPY . .
 
-RUN knex migrate:latest
+EXPOSE 3000
+
+RUN knex migrate:up
 RUN knex seed:run 
 
-EXPOSE 3000
 CMD [ "npm","run","dev"]

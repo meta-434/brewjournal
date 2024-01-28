@@ -1,48 +1,10 @@
 export {}; // needed for typescript to not complain about duplicate imports
 import express, {Request, Response} from "express";
 const router = express.Router();
-import knex from "../knex/knex";
+import knex, { Knex } from "knex";
 import type { Recipe } from "./RecipesTypes";
-//==================================================
-// GET (create tables + seed DB)
-// router.get("/setup", async (req: Request, res: Response) => {
-//   try {
-//     await knex.raw(
-//       `
-//         CREATE TABLE IF NOT EXISTS users (
-//           id SERIAL PRIMARY KEY,
-//           email VARCHAR(255) NOT NULL UNIQUE,
-//           password VARCHAR(255) NOT NULL
-//         );
-
-//         CREATE TABLE IF NOT EXISTS recipes (
-//           id SERIAL PRIMARY KEY,
-//           version INTEGER DEFAULT 1,
-//           is_public BOOLEAN DEFAULT FALSE,
-//           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-//           name VARCHAR(255) NOT NULL,
-//           description TEXT,
-//           steps TEXT,
-//           owner_id INTEGER REFERENCES users(id)
-//         );
-//         -- seed db with test data
-//         INSERT INTO users (email, password) 
-//         VALUES 
-//           ('alex@hapgood.me', 'password123'),
-//           ('garrett@moore.me', 'password456');
-//         INSERT INTO recipes (name, description, steps, owner_id)
-//         VALUES
-//           ('test recipe 1!', 'this is a test recipe entry #1!', '1. grind beans. 2. make coffee. 3. Drink coffee', 1),
-//           ('test recipe 2!', 'this is a test recipe entry #2!', '1. grind beans BETTER. 2. make coffee BETTER. 3. Drink coffee MORE', 2);
-// `
-//     );
-//     res.status(200).send({message: "Setup complete!"});
-//   } catch (err) {
-//     console.log(err);
-//     res.sendStatus(500);
-//   }
-// }); 
-//==================================================
+import config from "../../knexfile";
+let db: Knex = knex(config.development);
 
 
 // GET fetch all recipes, unless id provided, then fetch recipe by id
@@ -52,7 +14,7 @@ router.get('/:id(\\d+)?', async ( req: Request, res: Response ) => {
     try {
       if (id) {
         // fetch recipe by id
-        await knex.select('*').from('recipes').where('id', id).then((val: Recipe[]) => {
+        await db.select('*').from('recipes').where('id', id).then((val: Recipe[]) => {
           if (val.length === 0) {
             res.status(404).send({message: `Recipe with id ${id} not found!`});
           } 
@@ -60,7 +22,7 @@ router.get('/:id(\\d+)?', async ( req: Request, res: Response ) => {
         });
       } else {
         // fetch all recipes
-        const data: Recipe[] = await knex.select('*').from('recipes');
+        const data: Recipe[] = await db.select('*').from('recipes');
         res.status(200).send(data);
       }
     }
@@ -75,7 +37,7 @@ router.post('/', async (req: Request, res: Response) => {
   const { version, isPublic, name, description, steps, owner_id} = req.body;
 
   try {
-    let dbres = await knex('recipes')
+    let dbres = await db('recipes')
       .insert({name, version, is_public: isPublic, description, steps, owner_id})
       .returning('id');
 
@@ -93,7 +55,7 @@ router.put('/:id', async (req: Request, res: Response) => {
   const { version, isPublic, name, description, steps} = req.body;
 
   try {
-    await knex('recipes')
+    await db('recipes')
       .where('id', '=', id)
       .update({version, is_public: isPublic, name, description, steps}, ['id'])
       .then((val: Recipe[]) => {
@@ -114,7 +76,7 @@ router.put('/:id', async (req: Request, res: Response) => {
 router.delete('/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
 
-  let dbres = await knex('recipes')
+  let dbres = await db('recipes')
     .where('id', '=', id)
     .del(['id'])
     .catch((err) => {
