@@ -3,6 +3,8 @@ import { Layout, Menu } from 'antd';
 import { Link } from 'react-router-dom';
 import LoginLogout from './LoginLogout';
 
+// todo: move away from antd to mantine, much faster cold load
+// and decide if react-router's data api for routing is better vs redux
 const items = [
     { 
       key: '1',
