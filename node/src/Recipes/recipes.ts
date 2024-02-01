@@ -28,7 +28,7 @@ router.get('/:id(\\d+)?', async ( req: Request, res: Response ) => {
     }
     catch (err:any) {
         console.log(err);
-        res.sendStatus(500).render(err.stack);
+        res.send({error: err.stack}).status(500);
     }
 });
 
@@ -44,7 +44,7 @@ router.post('/', async (req: Request, res: Response) => {
     res.status(200).send({message: "Recipe created!", data: dbres});
   } catch (err: any) {
     console.log('error:\n', err);
-    res.sendStatus(500).render(err.stack);
+    res.send({error: err.stack}).status(500);
   };
 });
 
