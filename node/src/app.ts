@@ -3,10 +3,9 @@ import createError from "http-errors";
 import express, {Request, Response, NextFunction} from "express";
 import path from "path";
 import cors from "cors";
-import indexRouter from "./routes/index";
-import profileRouter from "./Users/profile";
+import { auth } from 'express-oauth2-jwt-bearer';
 import recipesRouter from "./Recipes/Recipes";
-import loginRouter from "./Users/login";
+import privateRouter from "./Private/Private";
 const port = 3000;
 
 interface HttpError extends Error {
@@ -14,6 +13,12 @@ interface HttpError extends Error {
 }
 
 const app = express();
+
+// jwt token validation
+const checkJwt = auth({
+  audience: process.env.JWT_AUDIENCE,
+  issuerBaseURL: process.env.JWT_ISSUER_BASE_URL,
+});
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -28,10 +33,10 @@ app.listen(port, () => {
   console.log(`Server is running on port ${port}.`);
 });
 
-app.use("/", indexRouter);
-app.use("/login", loginRouter);
-app.use("/profile", profileRouter);
+// catch requests to root url
+app.get("/", (res: Response) => {res.send('OK').sendStatus(200);});
 app.use("/recipes", recipesRouter);
+app.use("/private", checkJwt, privateRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req: Request, res: Response, next: NextFunction) {
