@@ -42,6 +42,13 @@ export async function up(knex: Knex): Promise<void> {
             table.integer('water_vol_ml');
             table.integer('owner_auth0_id');
         })
+        .createTable('coffee', function (table: Knex.CreateTableBuilder) {
+            table.increments('id');
+            table.string('roaster', 255).notNullable();
+            table.string('variety_or_name', 255).notNullable();
+            table.string('country_of_origin', 3);
+            table.integer('masl')
+        })
         .createTable('recipes_gear', function (table: Knex.CreateTableBuilder) {
             table.integer('recipe_id').notNullable().references('id').inTable('recipes');
             table.integer('gear_id').notNullable().references('id').inTable('gear');

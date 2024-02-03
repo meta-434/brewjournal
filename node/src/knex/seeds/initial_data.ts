@@ -18,19 +18,19 @@ export async function seed(knex: Knex): Promise<void> {
         {
             name: 'Bodum',
             description: 'this is a test mfg entry #2!',
-            country_of_origin: 'USA',
+            country_of_origin: 'CHE',
             site_url: 'https://www.google.com',
             logo_url: 'https://www.google.com',
         },
         {
             name: 'Hario',
             description: 'this is a test mfg entry #3!',
-            country_of_origin: 'USA',
+            country_of_origin: 'JPN',
             site_url: 'https://www.google.com',
             logo_url: 'https://www.google.com',
         },
         {
-            name: 'Stagg',
+            name: 'Fellow',
             description: 'this is a test mfg entry #4!',
             country_of_origin: 'USA',
             site_url: 'https://www.google.com',
@@ -51,6 +51,11 @@ export async function seed(knex: Knex): Promise<void> {
             grinder_total_revolutions: 5,
         }
 
+    ]);
+    await knex("coffee").insert([
+        {
+            
+        }
     ]);
     await knex("recipes").insert([
         {
