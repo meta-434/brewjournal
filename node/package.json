@@ -8,11 +8,11 @@
     "tsc": "tsc",
     "start:docker": "rm -rf ./dist && tsc && node ./dist/app.js",
     "dev": "node --require ts-node/register src/app.ts",
-    "knex:migrate:latest": "npx knex --knexfile './src/knex/knexfile.ts' migrate:latest",
-    "knex:migrate:rollback": "npx knex --knexfile './src/knex/knexfile.ts' migrate:rollback",
-    "knex:migrate:up": "npx knex --knexfile './src/knex/knexfile.ts' migrate:up",
-    "knex:migrate:down": "npx knex --knexfile './src/knex/knexfile.ts' migrate:down",
-    "knex:seed": "npx knex --knexfile './src/knex/knexfile.ts' seed:run"
+    "knex:migrate:latest": "npx knex migrate:latest",
+    "knex:migrate:rollback": "npx knex migrate:rollback",
+    "knex:migrate:up": "npx knex migrate:up",
+    "knex:migrate:down": "npx knex migrate:down",
+    "knex:seed": "npx knex seed:run"
   },
   "dependencies": {
     "axios": "^1.6.5",

@@ -21,7 +21,8 @@ services:
       test: ["CMD-SHELL", "pg_isready -d db123 -U user123"]
 
   backend:
-    restart: unless-stopped
+    restart: on-failure
+    command: bash -c "npm run knex:migrate:latest && npm run knex:seed && npm run dev"
     build:
       context: node
     container_name: backend
