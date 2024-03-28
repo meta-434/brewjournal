@@ -1,4 +1,5 @@
-FROM node:18
+FROM node:18-alpine
+RUN apk update && apk add bash
 
 WORKDIR /usr/src/app
 

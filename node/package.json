@@ -4,9 +4,9 @@
   "private": true,
   "main": "app.js",
   "scripts": {
-    "start": "node ./dist/app.js",
+    "start": "node dist/src/app.js",
     "tsc": "tsc",
-    "start:docker": "rm -rf ./dist && tsc && node ./dist/app.js",
+    "start:docker": "rm -rf /dist && tsc && node /dist/src/app.js",
     "dev": "node --require ts-node/register src/app.ts",
     "knex:migrate:latest": "npx knex migrate:latest",
     "knex:migrate:rollback": "npx knex migrate:rollback",
