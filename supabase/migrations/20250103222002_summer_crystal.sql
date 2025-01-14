@@ -1,5 +1,7 @@
 /*
   # Initial Schema for Recipe Sharing Website
+  0. Create Enum Types
+    - `brewmethod_type` (aeropress, french_press, manual_pour_over, auto_drip, espresso, cold_brew, other)
 
   1. New Tables
     - `profiles`
@@ -7,29 +9,57 @@
       - `username` (text, unique)
       - `avatar_url` (text)
       - `created_at` (timestamp)
-    
+
     - `recipes`
       - `id` (uuid, primary key)
       - `title` (text)
       - `description` (text)
-      - `instructions` (text)
-      - `cooking_time` (integer) - in minutes
-      - `servings` (integer)
+      - `instructions` (text array)
+      - `instruction_times` (integer array)
+      - `instruction_durations` (integer array)
+      - `brew_volume` (integer)
+      - `unit` (text)
       - `image_url` (text)
       - `user_id` (uuid, foreign key)
       - `created_at` (timestamp)
       - `updated_at` (timestamp)
-    
-    - `ingredients`
+
+    - `coffees`
       - `id` (uuid, primary key)
       - `recipe_id` (uuid, foreign key)
+      - 'image_url' (text)
       - `name` (text)
+      - `roaster` (text)
+      - `rating` (integer)
+      - `country_of_origin` (text)
+      - `roast_level` (text)
+      - `grind_size` (text)
+      - `grinder` (uuid, foreign key)
       - `amount` (decimal)
       - `unit` (text)
-    
+
+    - `grinders`
+        - `id` (uuid, primary key)
+        - `name` (text)
+        - `manufacturer_id` (text)
+        - `model` (text)
+        - `image_url` (text)
+        - `msrp` (decimal)
+        - `currency` (text)
+        - `shop_url` (text)
+        - `grindtest_urls` (text array)
+
+    - `brewmethods`
+        - `id` (uuid, primary key)
+        - `name` (text)
+        - `type` (brewmethod_type)
+
     - `ratings`
       - `id` (uuid, primary key)
       - `recipe_id` (uuid, foreign key)
+      - `coffee_id` (uuid, foreign key)
+      - `grinder_id` (uuid, foreign key)
+      - `brewmethod_id` (uuid, foreign key)
       - `user_id` (uuid, foreign key)
       - `rating` (integer) - 1 to 5
       - `comment` (text)
@@ -39,7 +69,16 @@
     - Enable RLS on all tables
     - Add policies for authenticated users
 */
-
+-- Create enum types
+CREATE TYPE brewmethod_type AS ENUM (
+  'aeropress',
+  'french_press',
+  'manual_pour_over',
+  'auto_drip',
+  'espresso',
+  'cold_brew',
+  'other'
+);
 -- Create profiles table
 CREATE TABLE profiles (
   id uuid PRIMARY KEY REFERENCES auth.users(id),
@@ -63,14 +102,32 @@ CREATE POLICY "Users can update own profile"
   USING (auth.uid() = id);
 
 -- Create recipes table
+-- -- - `recipes`
+--   - `id` (uuid, primary key)
+--   - `title` (text)
+--   - `description` (text)
+--   - `instructions` (text array)
+--   - `instruction_times` (integer array)
+--   - `instruction_durations` (integer array)
+--   - `brew_volume` (integer)
+--   - `unit` (text)
+--   - `image_url` (text)
+--   - `user_id` (uuid, foreign key)
+--   - `created_at` (timestamp)
+--   - `updated_at` (timestamp)
 CREATE TABLE recipes (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   title text NOT NULL,
   description text,
-  instructions text NOT NULL,
-  cooking_time integer NOT NULL,
-  servings integer NOT NULL,
+  instructions text array NOT NULL,
+  instructions_times integer array NOT NULL,
+  instructions_durations integer array NOT NULL,
+  brew_volume integer NOT NULL,
+  unit text NOT NULL,
   image_url text,
+  coffee_id uuid REFERENCES coffees(id) NOT NULL,
+  grinder_id uuid REFERENCES grinders(id) NOT NULL,
+  brewmethod_id uuid REFERENCES brewmethods(id) NOT NULL,
   user_id uuid REFERENCES profiles(id) NOT NULL,
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now()

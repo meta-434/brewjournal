@@ -1,7 +1,6 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import RecipeForm from '../components/RecipeForm';
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import RecipeForm from "../components/RecipeForm";
 
 export default function CreateRecipe() {
   const { user } = useAuth();

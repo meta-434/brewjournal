@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
-import { Clock, Users, Star } from 'lucide-react';
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { supabase } from "../lib/supabase";
+import { Clock, Users, Star } from "../components/Icons";
 
 interface Recipe {
   id: string;
@@ -14,6 +14,9 @@ interface Recipe {
     username: string;
   };
   average_rating: number;
+  ratings: {
+    rating: number;
+  };
 }
 
 export default function Home() {
@@ -23,24 +26,29 @@ export default function Home() {
   useEffect(() => {
     async function fetchRecipes() {
       const { data, error } = await supabase
-        .from('recipes')
-        .select(`
+        .from("recipes")
+        .select(
+          `
           *,
           profiles (username),
           ratings (rating)
-        `)
-        .order('created_at', { ascending: false });
+        `,
+        )
+        .order("created_at", { ascending: false });
 
       if (error) {
-        console.error('Error fetching recipes:', error);
+        console.error("Error fetching recipes:", error);
         return;
       }
 
-      const recipesWithRating = data.map(recipe => ({
+      const recipesWithRating = data.map((recipe) => ({
         ...recipe,
         average_rating: recipe.ratings.length
-          ? recipe.ratings.reduce((acc: number, curr: any) => acc + curr.rating, 0) / recipe.ratings.length
-          : 0
+          ? recipe.ratings.reduce(
+              (acc: number, curr: { rating: number }) => acc + curr.rating,
+              0,
+            ) / recipe.ratings.length
+          : 0,
       }));
 
       setRecipes(recipesWithRating);
@@ -67,13 +75,18 @@ export default function Home() {
           className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
         >
           <img
-            src={recipe.image_url || 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?ixlib=rb-4.0.3'}
+            src={
+              recipe.image_url ||
+              "https://images.unsplash.com/photo-1495521821757-a1efb6729352?ixlib=rb-4.0.3"
+            }
             alt={recipe.title}
             className="w-full h-48 object-cover"
           />
           <div className="p-4">
             <h2 className="text-xl font-semibold mb-2">{recipe.title}</h2>
-            <p className="text-gray-600 mb-4 line-clamp-2">{recipe.description}</p>
+            <p className="text-gray-600 mb-4 line-clamp-2">
+              {recipe.description}
+            </p>
             <div className="flex items-center justify-between text-sm text-gray-500">
               <div className="flex items-center space-x-1">
                 <Clock className="h-4 w-4" />

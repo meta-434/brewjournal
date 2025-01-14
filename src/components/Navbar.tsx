@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { ChefHat, LogIn, LogOut, PlusCircle, User } from 'lucide-react';
+import { ChefHat, PlusCircle, User, LogOut, LogIn } from './Icons';
 
 export default function Navbar() {
   const { user, signOut } = useAuth();

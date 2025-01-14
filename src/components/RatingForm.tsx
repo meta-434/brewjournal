@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Star } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import { Star } from './Icons';
 import toast from 'react-hot-toast';
 
 interface RatingFormProps {

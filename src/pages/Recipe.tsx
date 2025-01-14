@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { Clock, Users, Star } from 'lucide-react';
+import { Clock, Users, Star } from '../components/Icons';
 import RatingForm from '../components/RatingForm';
 import { useAuth } from '../contexts/AuthContext';
 import { format } from 'date-fns';

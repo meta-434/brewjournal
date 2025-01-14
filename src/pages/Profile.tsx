@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { Clock, Users, Star } from 'lucide-react';
+import { Clock, Users, Star } from '../components/Icons';
 
 interface Profile {
   username: string;
