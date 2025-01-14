@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
-import { Clock, Users, Star } from '../components/Icons';
-import RatingForm from '../components/RatingForm';
-import { useAuth } from '../contexts/AuthContext';
-import { format } from 'date-fns';
+import { useEffect, useState, useCallback } from "react";
+import { useParams } from "react-router-dom";
+import { supabase } from "../lib/supabase";
+import { Clock, Users, Star } from "../components/Icons";
+import RatingForm from "../components/RatingForm";
+import { useAuth } from "../contexts/AuthContext";
+import { format } from "date-fns";
 
 interface Recipe {
   id: string;
@@ -45,23 +45,20 @@ export default function Recipe() {
   const [ratings, setRatings] = useState<Rating[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchRecipeData = async () => {
+  const fetchRecipeData = useCallback(async () => {
     try {
       const [recipeData, ingredientsData, ratingsData] = await Promise.all([
         supabase
-          .from('recipes')
-          .select('*, profiles(username)')
-          .eq('id', id)
+          .from("recipes")
+          .select("*, profiles(username)")
+          .eq("id", id)
           .single(),
+        supabase.from("ingredients").select("*").eq("recipe_id", id),
         supabase
-          .from('ingredients')
-          .select('*')
-          .eq('recipe_id', id),
-        supabase
-          .from('ratings')
-          .select('*, profiles(username)')
-          .eq('recipe_id', id)
-          .order('created_at', { ascending: false })
+          .from("ratings")
+          .select("*, profiles(username)")
+          .eq("recipe_id", id)
+          .order("created_at", { ascending: false }),
       ]);
 
       if (recipeData.error) throw recipeData.error;
@@ -72,15 +69,15 @@ export default function Recipe() {
       setIngredients(ingredientsData.data);
       setRatings(ratingsData.data);
     } catch (error) {
-      console.error('Error fetching recipe:', error);
+      console.error("Error fetching recipe:", error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]); // Add id as a dependency
 
   useEffect(() => {
     fetchRecipeData();
-  }, [id]);
+  }, [fetchRecipeData]);
 
   if (loading) {
     return (
@@ -106,14 +103,17 @@ export default function Recipe() {
     <div className="max-w-4xl mx-auto">
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         <img
-          src={recipe.image_url || 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?ixlib=rb-4.0.3'}
+          src={
+            recipe.image_url ||
+            "https://images.unsplash.com/photo-1495521821757-a1efb6729352?ixlib=rb-4.0.3"
+          }
           alt={recipe.title}
           className="w-full h-96 object-cover"
         />
-        
+
         <div className="p-6">
           <h1 className="text-3xl font-bold mb-4">{recipe.title}</h1>
-          
+
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-6 text-gray-600">
               <div className="flex items-center space-x-1">
@@ -126,17 +126,17 @@ export default function Recipe() {
               </div>
               <div className="flex items-center space-x-1">
                 <Star className="h-5 w-5" />
-                <span>{averageRating.toFixed(1)} ({ratings.length} reviews)</span>
+                <span>
+                  {averageRating.toFixed(1)} ({ratings.length} reviews)
+                </span>
               </div>
             </div>
-            <div className="text-gray-600">
-              by {recipe.profiles.username}
-            </div>
+            <div className="text-gray-600">by {recipe.profiles.username}</div>
           </div>
 
           <div className="prose max-w-none mb-8">
             <p className="text-gray-600 mb-4">{recipe.description}</p>
-            
+
             <h2 className="text-xl font-semibold mb-2">Ingredients</h2>
             <ul className="list-disc pl-5 mb-6">
               {ingredients.map((ingredient) => (
@@ -154,10 +154,13 @@ export default function Recipe() {
 
           <div className="border-t pt-8">
             <h2 className="text-xl font-semibold mb-4">Reviews</h2>
-            
+
             {user && (
               <div className="mb-8">
-                <RatingForm recipeId={recipe.id} onRatingSubmit={fetchRecipeData} />
+                <RatingForm
+                  recipeId={recipe.id}
+                  onRatingSubmit={fetchRecipeData}
+                />
               </div>
             )}
 
@@ -172,16 +175,18 @@ export default function Recipe() {
                             key={i}
                             className={`h-5 w-5 ${
                               i < rating.rating
-                                ? 'fill-yellow-400 text-yellow-400'
-                                : 'text-gray-300'
+                                ? "fill-yellow-400 text-yellow-400"
+                                : "text-gray-300"
                             }`}
                           />
                         ))}
                       </div>
-                      <span className="font-medium">{rating.profiles.username}</span>
+                      <span className="font-medium">
+                        {rating.profiles.username}
+                      </span>
                     </div>
                     <span className="text-sm text-gray-500">
-                      {format(new Date(rating.created_at), 'MMM d, yyyy')}
+                      {format(new Date(rating.created_at), "MMM d, yyyy")}
                     </span>
                   </div>
                   {rating.comment && (
