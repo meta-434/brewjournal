@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  backend:
+    build: ./backend
+    container_name: express-api
+    ports:
+      - "3000:3000"
+    environment:
+      SUPABASE_URL: ${SUPABASE_URL}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: react-ui
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
