@@ -1,80 +1,73 @@
-import { useEffect, useState } from "react";
-import { supabase } from "./supabase";
+import React from "react";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { Home } from "./pages/home";
+import { Recipes } from "./pages/recipes";
+import { Gear } from "./pages/gear";
+import { Beans } from "./pages/beans";
+import { Community } from "./pages/community";
+import { Coffee } from "./assets/coffee";
 
-export default function RecipeFull() {
-  const [recipe, setRecipe] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    async function fetchFullRecipe() {
-      setLoading(true);
-      setError(null);
-
-      const { data, error } = await supabase
-        .from("recipes")
-        .select(
-          `
-          *,
-          user:users(*),
-          brewer:brewers(
-            *,
-            manufacturer:brewer_manufacturers(*)
-          ),
-          grinder:grinders(
-            *,
-            manufacturer:grinder_manufacturers(*)
-          ),
-          bean:beans(*),
-          roast:roasts(
-            *,
-            roaster:roasters(*)
-          ),
-          steps:recipe_steps(*)
-        `,
-        )
-        .eq("id", "1359e8d1-13f3-4974-aee1-aba934db9ffa")
-        .single();
-
-      if (error) {
-        console.error(error);
-        setError(error);
-      } else {
-        // Sort steps by step_number to ensure correct sequence
-        if (data?.steps) {
-          data.steps.sort((a, b) => a.step_number - b.step_number);
-        }
-        setRecipe(data);
-      }
-      setLoading(false);
-    }
-
-    fetchFullRecipe();
-  }, []);
-
-  if (loading) return <p>Loading recipe...</p>;
-  if (error) return <p>Error loading recipe: {error.message}</p>;
-  if (!recipe) return <p>No recipe found</p>;
-
-  const roasterName = recipe.roast?.roaster?.name ?? "Unknown roaster";
-
+const App = () => {
   return (
-    <div>
-      <h2>{recipe.title}</h2>
-      <p>Roaster: {roasterName}</p>
-      <p>User: {recipe.user?.display_name ?? "Unknown user"}</p>
-      <p>Brewer: {recipe.brewer?.model_name ?? "N/A"}</p>
-      <p>Grinder: {recipe.grinder?.model_name ?? "N/A"}</p>
+    <BrowserRouter>
+      <div className="min-h-screen w-full">
+        {/* Header */}
+        <header className="w-full border-b border-[#3E2723]/10">
+          <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
+            <Link to="/" className="flex items-center gap-2">
+              <div className="w-6 h-6 text-[#8D6E63]">
+                <Coffee />
+              </div>
+              <span className="font-serif font-bold text-xl text-[#3E2723]">
+                Brew Collective
+              </span>
+            </Link>
+            <nav className="flex items-center gap-6">
+              <a
+                href="#explore"
+                className="text-[#3E2723] hover:text-[#8D6E63] transition-colors font-medium text-sm"
+              >
+                Explore
+              </a>
+              <Link
+                to="/login"
+                className="text-[#3E2723] hover:text-[#8D6E63] transition-colors font-medium text-sm"
+              >
+                Login
+              </Link>
+            </nav>
+          </div>
+        </header>
 
-      <h3>Steps</h3>
-      <ol>
-        {recipe.steps.map((step) => (
-          <li key={step.id}>
-            {step.instruction} (Start: {step.t_start_seconds}s, Duration:{" "}
-            {step.t_delta_seconds}s, Volume +{step.v_delta_ml} mL)
-          </li>
-        ))}
-      </ol>
-    </div>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/recipes" element={<Recipes />} />
+          <Route path="/gear" element={<Gear />} />
+          <Route path="/beans" element={<Beans />} />
+          <Route path="/community" element={<Community />} />
+        </Routes>
+
+        {/* Footer */}
+        <footer className="w-full border-t border-[#3E2723]/10 py-12 px-6">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 text-[#8D6E63]">
+                  <Coffee />
+                </div>
+                <span className="font-serif font-semibold text-[#3E2723]">
+                  BrewJournal
+                </span>
+              </div>
+              <p className="text-sm text-[#3E2723]/50">
+                A community-driven platform for coffee enthusiasts
+              </p>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </BrowserRouter>
   );
-}
+};
+
+export default App;
