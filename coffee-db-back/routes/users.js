@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const userModel = require("../models/userModel");
-
+// test folder-scoped VCH commit - backend
 router.get("/test", async (req, res) => {
   res.status(200).json({ message: "users-you made it!" });
 });
