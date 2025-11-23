@@ -35,10 +35,7 @@
 
 
 ### Backend Tips/Tricks
-to set up dev:
-`docker pull postgres:17`
-`docker run --name drizzle-postgres -e POSTGRES_PASSWORD=mypassword -d -p 5432:5432 postgres`
-
----- dev -----
-PEGGED AT POSTGRES:17
-`npm start` in coffee-db-back
+#### to set up dev:
+!!! PEGGED AT POSTGRES:17 !!!
+- `docker pull postgres:17`
+- `docker run --name drizzle-postgres -e POSTGRES_PASSWORD=mypassword -d -p 5432:5432 postgres`
