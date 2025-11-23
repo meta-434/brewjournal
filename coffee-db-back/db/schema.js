@@ -75,6 +75,7 @@ export const recipes = pgTable("recipes", {
     onDelete: "set null",
   }),
   gear_id: uuid("gear_id").references(() => gear.id, { onDelete: "set null" }),
+  rating: integer("rating").notNull(),
   created_at: timestamp("created_at").defaultNow(),
 });
 

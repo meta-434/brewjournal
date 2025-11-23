@@ -34,6 +34,7 @@ CREATE TABLE "recipes" (
 	"bean_id" uuid,
 	"roast_id" uuid,
 	"gear_id" uuid,
+	"rating" integer NOT NULL,
 	"created_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint

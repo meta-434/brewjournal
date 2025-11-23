@@ -34,9 +34,15 @@ const getUserById = async (id) => {
  * Get a user by username.
  */
 const getUserByUsername = async (username) => {
-  console.log(`\n looking for ${username} in database with users.name`);
   const result = await db.select().from(users).where(eq(users.name, username));
-  console.log("result of that search is...", result);
+  return result[0] ?? null;
+};
+
+const getUserByEmail = async (userEmail) => {
+  const result = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, userEmail));
   return result[0] ?? null;
 };
 
@@ -89,7 +95,15 @@ const registerUser = async (name, email, password) => {
  * Log in a user. Checks password + returns JWT.
  */
 const loginUser = async (username, email, password) => {
-  const user = await getUserByUsername(username);
+  let user;
+  if (username && !email) {
+    user = await getUserByUsername(username);
+  } else if (email && !username) {
+    user = await getUserByEmail(email);
+  } else {
+    user = await getUserByUsername(username);
+  }
+
   if (!user) throw new Error("User not found");
 
   const isMatch = await runtime.compareHash(password, user.password);

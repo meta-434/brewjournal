@@ -1,24 +1,24 @@
 const express = require("express");
 const router = express.Router();
 const userModel = require("../models/userModel");
-// test folder-scoped VCH commit - backend
+
 router.get("/test", async (req, res) => {
   res.status(200).json({ message: "users-you made it!" });
 });
 
 router.post("/register", async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { username, email, password } = req.body;
 
     // Make sure required fields are present
-    if (!name || !password || !email) {
+    if (!username || !password || !email) {
       return res
         .status(400)
         .json({ error: "username, email, and password are required" });
     }
 
     // Insert the user
-    const newUser = await userModel.registerUser(name, email, password);
+    const newUser = await userModel.registerUser(username, email, password);
 
     // Respond with success
     res.status(200).json({

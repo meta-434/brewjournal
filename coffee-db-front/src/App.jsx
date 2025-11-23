@@ -6,7 +6,7 @@ import { Gear } from "./pages/gear";
 import { Beans } from "./pages/beans";
 import { Community } from "./pages/community";
 import { Coffee } from "./assets/coffee";
-// test folder-scoped commit - frontend
+
 const App = () => {
   return (
     <BrowserRouter>

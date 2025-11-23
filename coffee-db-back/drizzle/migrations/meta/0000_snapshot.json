@@ -1,5 +1,5 @@
 {
-  "id": "555c7a12-4378-4d94-9250-d49d4e0dbb83",
+  "id": "3fd04720-a03c-4038-8937-f69c7ff9b30d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -250,6 +250,12 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": false
+        },
+        "rating": {
+          "name": "rating",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
         },
         "created_at": {
           "name": "created_at",

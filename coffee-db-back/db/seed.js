@@ -108,6 +108,7 @@ async function seed() {
       bean_id: bean.id,
       roast_id: roast.id,
       gear_id: gearItem.id,
+      rating: 947,
     })
     .returning();
 
