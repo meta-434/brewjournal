@@ -6,6 +6,7 @@ import { Gear } from "./pages/gear";
 import { Beans } from "./pages/beans";
 import { Community } from "./pages/community";
 import { Coffee } from "./assets/coffee";
+import { Login } from "./pages/login";
 
 const App = () => {
   return (
@@ -45,6 +46,7 @@ const App = () => {
           <Route path="/gear" element={<Gear />} />
           <Route path="/beans" element={<Beans />} />
           <Route path="/community" element={<Community />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
 
         {/* Footer */}

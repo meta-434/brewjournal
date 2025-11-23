@@ -34,14 +34,14 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { username, email, password } = req.body;
+    // TODO: make this not suck - pick email or password, or spend time to do both.
+    // if (!username || !email || !password) {
+    //   return res
+    //     .status(400)
+    //     .json({ error: " username, email, and password are required" });
+    // }
 
-    if (!username || !email || !password) {
-      return res
-        .status(400)
-        .json({ error: " username, email, and password are required" });
-    }
-
-    const result = await userModel.loginUser(username, email, password);
+    const result = await userModel.loginUser(null, email, password);
 
     res.status(200).json({
       message: "login successful",
