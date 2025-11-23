@@ -5,10 +5,11 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "migrate:generate": "npx drizzle-kit generate",
+    "migrate:gen": "npx drizzle-kit generate",
     "migrate:up": "npx drizzle-kit push",
     "migrate:down": "node db/down.js",
     "migrate:nuke": "node db/nuke.js",
+    "migrate:seed": "node db/seed.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
