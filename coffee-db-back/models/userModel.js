@@ -81,7 +81,6 @@ const registerUser = async (name, email, password) => {
   const token = jwt.sign(
     {
       id: process.env.HIDE_USERID ? null : user.id,
-      name: user.name,
       email: user.email,
     },
     jwtSecret,
@@ -94,15 +93,8 @@ const registerUser = async (name, email, password) => {
 /**
  * Log in a user. Checks password + returns JWT.
  */
-const loginUser = async (username, email, password) => {
-  let user;
-  if (username && !email) {
-    user = await getUserByUsername(username);
-  } else if (email && !username) {
-    user = await getUserByEmail(email);
-  } else {
-    user = await getUserByUsername(username);
-  }
+const loginUser = async (email, password) => {
+  const user = await getUserByEmail(email);
 
   if (!user) throw new Error("User not found");
 

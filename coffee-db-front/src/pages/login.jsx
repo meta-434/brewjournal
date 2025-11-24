@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export function Login() {
+  const navigate = useNavigate();
   const [mode, setMode] = useState("login");
   const [formData, setFormData] = useState({
     name: "",
@@ -31,6 +33,7 @@ export function Login() {
               email: formData.email,
               password: formData.password,
             };
+
       const response = await fetch(endpoint, {
         method: "POST",
         headers: {
@@ -46,11 +49,19 @@ export function Login() {
         );
       }
       setSuccess(true);
+      const successBody = await response
+        .json()
+        .catch((e) => new Error({ message: e }));
+
+      localStorage.setItem("token", successBody.token);
+
       setFormData({
         name: "",
         email: "",
         password: "",
       });
+      // placeholder before profile nav flow is a thing
+      navigate("/");
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
