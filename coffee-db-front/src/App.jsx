@@ -30,12 +30,21 @@ const App = () => {
               >
                 Explore
               </a>
-              <Link
-                to="/login"
-                className="text-[#3E2723] hover:text-[#8D6E63] transition-colors font-medium text-sm"
-              >
-                Login
-              </Link>
+              {true ? (
+                <Link
+                  to="/profile"
+                  classname="text-[#3E2723] hover:text-[#8D6E63] transition-colors font-medium text-sm"
+                >
+                  USERNAME
+                </Link>
+              ) : (
+                <Link
+                  to="/login"
+                  className="text-[#3E2723] hover:text-[#8D6E63] transition-colors font-medium text-sm"
+                >
+                  Login
+                </Link>
+              )}
             </nav>
           </div>
         </header>
